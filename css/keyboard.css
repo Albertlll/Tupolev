@@ -1,0 +1,131 @@
+/* Стили для экрана ввода и виртуальной клавиатуры */
+.input-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(245, 245, 245, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 100;
+}
+
+.input-screen h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #333;
+    text-align: center;
+}
+
+.input-display {
+    width: 80%;
+    max-width: 400px;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+#group-input {
+    width: 100%;
+    font-size: 2rem;
+    padding: 15px;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: white;
+    letter-spacing: 2px;
+}
+
+#clear-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+}
+
+.keyboard {
+    width: 90%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.keyboard-row {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.key {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.key:hover {
+    background-color: #e0e0e0;
+}
+
+.key:active {
+    background-color: #d0d0d0;
+}
+
+#submit-btn, #back-btn {
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    flex: 1;
+}
+
+#back-btn {
+    background-color: #f44336;
+}
+
+#submit-btn:hover {
+    background-color: #45a049;
+}
+
+#back-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* Адаптация для различных экранов */
+@media (max-height: 800px) {
+    .key {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+    }
+    
+    .input-screen h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+    
+    #group-input {
+        font-size: 1.8rem;
+        padding: 10px;
+    }
+} 

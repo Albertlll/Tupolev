@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Информационный киоск</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/slider.css">
+    <link rel="stylesheet" href="css/keyboard.css">
+    <link rel="stylesheet" href="css/stories.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Слайдер с рекламой -->
+        <div id="slider" class="slider">
+            <!-- Контент слайдера будет загружен динамически из папки slides -->
+        </div>
+
+        <!-- Экран ввода номера группы (изначально скрыт) -->
+        <div id="input-screen" class="input-screen hidden">
+            <h2>Введите номер группы</h2>
+            <div class="input-display">
+                <input type="text" id="group-input" readonly>
+                <button id="clear-btn">&#10005;</button>
+            </div>
+            <div class="keyboard">
+                <div class="keyboard-row">
+                    <button class="key" data-key="1">1</button>
+                    <button class="key" data-key="2">2</button>
+                    <button class="key" data-key="3">3</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key" data-key="4">4</button>
+                    <button class="key" data-key="5">5</button>
+                    <button class="key" data-key="6">6</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key" data-key="7">7</button>
+                    <button class="key" data-key="8">8</button>
+                    <button class="key" data-key="9">9</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key" data-key="0">0</button>
+                </div>
+                <div class="keyboard-row">
+                    <button id="submit-btn">Подтвердить</button>
+                    <button id="back-btn">Назад</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/slider.js"></script>
+    <script src="js/keyboard.js"></script>
+</body>
+</html> 
