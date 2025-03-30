@@ -62,6 +62,27 @@
                     <button id="submit-btn">Подтвердить</button>
                     <button id="back-btn">Назад</button>
                 </div>
+                <div class="keyboard-row teacher-button-row">
+                    <button id="teacher-btn">Я учитель</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Экран ввода ФИО преподавателя (изначально скрыт) -->
+        <div id="teacher-input-screen" class="input-screen hidden">
+            <div class="input-header">
+                <h2>Введите ФИО преподавателя</h2>
+                <div id="teacher-current-time" class="current-time">00:00:00</div>
+            </div>
+            <div class="input-display teacher-input-display">
+                <input type="text" id="teacher-name-input" placeholder="Фамилия Имя Отчество">
+                <button id="teacher-clear-btn">&#10005;</button>
+            </div>
+            <div class="keyboard">
+                <div class="keyboard-row">
+                    <button id="teacher-submit-btn">Найти</button>
+                    <button id="teacher-back-btn">Назад</button>
+                </div>
             </div>
         </div>
     </div>

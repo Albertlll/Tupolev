@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Получение параметров URL
     const urlParams = new URLSearchParams(window.location.search);
     const groupNumber = urlParams.get('group');
+    const teacherName = urlParams.get('teacher');
     
     // Элементы страницы
     const groupNumberElement = document.getElementById('group-number');
@@ -13,10 +14,41 @@ document.addEventListener('DOMContentLoaded', function() {
     const placeholderElement = document.querySelector('.placeholder-text');
     const currentTimeElement = document.getElementById('current-time');
     
+    // Система отслеживания активности
+    let inactivityTimer;
+    const INACTIVITY_TIMEOUT = 10000; // 10 секунд
+    
+    // Функция для запуска таймера неактивности
+    function startInactivityTimer() {
+        // Очищаем предыдущий таймер, если он существует
+        clearTimeout(inactivityTimer);
+        
+        // Устанавливаем новый таймер
+        inactivityTimer = setTimeout(() => {
+            console.log('Пользователь неактивен в течение 10 секунд, возвращаемся на начальный экран');
+            window.location.href = 'index.html';
+        }, INACTIVITY_TIMEOUT);
+    }
+    
+    // Сбрасываем таймер при любой активности
+    function resetInactivityTimer() {
+        startInactivityTimer();
+    }
+    
+    // Отслеживаем события активности пользователя
+    document.addEventListener('mousemove', resetInactivityTimer);
+    document.addEventListener('mousedown', resetInactivityTimer);
+    document.addEventListener('keypress', resetInactivityTimer);
+    document.addEventListener('touchstart', resetInactivityTimer);
+    document.addEventListener('scroll', resetInactivityTimer);
+    
+    // Запускаем таймер при загрузке страницы
+    startInactivityTimer();
+    
     // Обработчик для кнопки "Вернуться на главную"
-    document.getElementById('back-to-main').addEventListener('click', function() {
-        window.location.href = 'index.html';
-    });
+    // document.getElementById('back-to-main').addEventListener('click', function() {
+    //     window.location.href = 'index.html';
+    // });
     
     // Инициализация страницы
     initPage();
@@ -28,15 +60,15 @@ document.addEventListener('DOMContentLoaded', function() {
         setInterval(updateCurrentTime, 1000);
         
         if (groupNumber) {
-            // Установка номера группы в заголовок
-            groupNumberElement.textContent = groupNumber;
-            
-            // Загрузка расписания
-            loadSchedule(groupNumber);
+            // Загрузка расписания группы
+            loadGroupSchedule(groupNumber);
+        } else if (teacherName) {
+            // Загрузка расписания преподавателя
+            loadTeacherSchedule(teacherName);
         } else {
-            // Если номер группы не передан, отображаем сообщение об ошибке
+            // Если параметры не переданы, отображаем сообщение об ошибке
             groupNumberElement.textContent = 'не указан';
-            showError('Не указан номер группы');
+            showError('Не указаны параметры для отображения расписания');
         }
     }
     
@@ -46,108 +78,280 @@ document.addEventListener('DOMContentLoaded', function() {
             const now = new Date();
             const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
             const day = days[now.getDay()];
-            const time = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-            currentTimeElement.innerHTML = `${time}<div class="current-time-label">${day}</div>`;
+            
+            // Форматируем время в 24-часовом формате без AM/PM
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const time = `${hours}:${minutes}`;
+            
+            // Проверяем, есть ли элемент отображения дня недели
+            let weekTypeElement = document.querySelector('.week-type');
+            
+            // Если элемента нет, но у нас есть данные о типе недели, создаем его
+            if (!weekTypeElement && window.weekType) {
+                weekTypeElement = document.createElement('div');
+                weekTypeElement.classList.add('week-type');
+                
+                const timeInfoElement = document.querySelector('.time-info');
+                if (timeInfoElement) {
+                    timeInfoElement.insertBefore(weekTypeElement, currentTimeElement);
+                }
+            }
+            
+            // Обновляем содержимое элемента дня недели, если он существует
+            if (weekTypeElement) {
+                const weekTypeText = window.weekType || '';
+                weekTypeElement.innerHTML = `${day}<div class="week-type-label">${weekTypeText}</div>`;
+            }
+            
+            // Обновляем время (без повторения дня недели внизу)
+            currentTimeElement.textContent = time;
         }
     }
     
-    // Функция загрузки расписания (использует локальные данные)
-    function loadSchedule(groupNumber) {
+    // Функция загрузки расписания группы
+    function loadGroupSchedule(groupNumber) {
+        // Установка номера группы в заголовок
+        groupNumberElement.textContent = groupNumber;
+        
         // Показываем индикатор загрузки
         showLoading();
         
-        // Имитация загрузки
-        setTimeout(() => {
-            hideLoading();
-            
-            // Данные расписания для группы 4337
-            // В реальном проекте здесь был бы fetch к серверу
-            if (groupNumber === '4337') {
-                displaySchedule(getMockData());
-            } else {
-                showError('Группа не найдена');
-            }
-        }, 500);
+        // Загружаем данные расписания из JSON-файла
+        fetch('data/mock_schedule.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Не удалось загрузить данные расписания');
+                }
+                return response.json();
+            })
+            .then(data => {
+                hideLoading();
+                
+                // Проверяем, есть ли данные для указанной группы
+                if (data[groupNumber]) {
+                    displaySchedule(data[groupNumber], 'group');
+                } else {
+                    showError('Группа не найдена');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке расписания:', error);
+                hideLoading();
+                
+                // В случае ошибки загрузки, используем встроенные данные
+                if (groupNumber === '4337') {
+                    displaySchedule(getFallbackGroupData(), 'group');
+                } else {
+                    showError('Не удалось загрузить расписание');
+                }
+            });
     }
     
-    // Функция получения тестовых данных
-    function getMockData() {
+    // Функция загрузки расписания преподавателя
+    function loadTeacherSchedule(teacherName) {
+        // Установка имени преподавателя в заголовок
+        groupNumberElement.textContent = teacherName;
+        
+        // Показываем индикатор загрузки
+        showLoading();
+        
+        // Загружаем данные расписания из JSON-файла
+        fetch('data/mock_schedule.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Не удалось загрузить данные расписания');
+                }
+                return response.json();
+            })
+            .then(data => {
+                hideLoading();
+                
+                // Проверяем, есть ли данные для указанного преподавателя
+                if (data.teachers && data.teachers[teacherName]) {
+                    displaySchedule(data.teachers[teacherName], 'teacher');
+                } else {
+                    showError('Преподаватель не найден');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке расписания:', error);
+                hideLoading();
+                
+                // В случае ошибки загрузки, используем встроенные данные
+                if (teacherName === 'Шумилкин Александр Олегович') {
+                    displaySchedule(getFallbackTeacherData(), 'teacher');
+                } else {
+                    showError('Не удалось загрузить расписание');
+                }
+            });
+    }
+    
+    // Резервные данные для группы на случай проблем с загрузкой JSON
+    function getFallbackGroupData() {
         return {
-            name: "4337",
-            lessons: [
+            "name": "4337",
+            "week_type": "четная",
+            "lessons": [
                 {
-                    number: "333",
-                    room: "8 здание",
-                    subject: "Поддержка и тестирование программных модулей",
-                    type: "Практика",
-                    time: "8:00",
-                    status: "past"
+                    "number": "323",
+                    "room": "8 здание",
+                    "subject": "Поддержка и тестирование программных модулей",
+                    "type": "Практика",
+                    "time": "8:00",
+                    "status": "past"
                 },
                 {
-                    number: "419",
-                    room: "7 здание",
-                    subject: "Поддержка и тестирование программных модулей",
-                    type: "Лекция",
-                    time: "9:40",
-                    status: "current"
+                    "number": "419",
+                    "room": "7 здание",
+                    "subject": "Поддержка и тестирование программных модулей",
+                    "type": "Лекция",
+                    "time": "9:40",
+                    "status": "current"
                 },
                 {
-                    number: "124",
-                    room: "7 здание",
-                    subject: "Поддержка и тестирование программных модулей",
-                    type: "Практика",
-                    time: "11:20",
-                    status: "upcoming"
+                    "number": "124",
+                    "room": "7 здание",
+                    "subject": "Поддержка и тестирование программных модулей",
+                    "type": "Практика",
+                    "time": "11:20",
+                    "status": "upcoming"
                 },
                 {
-                    number: "124",
-                    room: "7 здание",
-                    subject: "Поддержка и тестирование программных модулей",
-                    type: "Лабораторная работа",
-                    time: "13:30",
-                    status: "upcoming"
+                    "number": "124",
+                    "room": "7 здание",
+                    "subject": "Поддержка и тестирование программных модулей",
+                    "type": "Лабораторная работа",
+                    "time": "13:30",
+                    "status": "upcoming"
                 },
                 {
-                    number: "124",
-                    room: "7 здание",
-                    subject: "Поддержка и тестирование программных модулей",
-                    type: "Лабораторная работа",
-                    time: "15:10",
-                    status: "upcoming"
+                    "number": "124",
+                    "room": "7 здание",
+                    "subject": "Поддержка и тестирование программных модулей",
+                    "type": "Лабораторная работа",
+                    "time": "15:10",
+                    "status": "upcoming"
+                }
+            ]
+        };
+    }
+    
+    // Резервные данные для преподавателя на случай проблем с загрузкой JSON
+    function getFallbackTeacherData() {
+        return {
+            "name": "Шумилкин Александр Олегович",
+            "position": "Доцент",
+            "department": "Кафедра информационных технологий",
+            "week_type": "четная",
+            "lessons": [
+                {
+                    "number": "419",
+                    "room": "7 здание",
+                    "subject": "Поддержка и тестирование программных модулей",
+                    "group": "4337",
+                    "type": "Лекция",
+                    "time": "9:40",
+                    "status": "current"
+                },
+                {
+                    "number": "420",
+                    "room": "7 здание",
+                    "subject": "Разработка мобильных приложений",
+                    "group": "3204",
+                    "type": "Лекция",
+                    "time": "11:20",
+                    "status": "upcoming"
+                },
+                {
+                    "number": "501",
+                    "room": "5 здание",
+                    "subject": "Программная инженерия",
+                    "group": "2105",
+                    "type": "Практика",
+                    "time": "13:30",
+                    "status": "upcoming"
+                },
+                {
+                    "number": "502",
+                    "room": "5 здание",
+                    "subject": "Методы и средства проектирования ИС",
+                    "group": "3202",
+                    "type": "Лабораторная работа",
+                    "time": "15:10",
+                    "status": "upcoming"
                 }
             ]
         };
     }
     
     // Функция отображения расписания
-    function displaySchedule(groupData) {
+    function displaySchedule(data, scheduleType) {
         placeholderElement.style.display = 'none';
         scheduleContainerElement.style.display = 'block';
         scheduleContainerElement.innerHTML = '';
         
+        // Добавляем тип недели
+        if (data.week_type) {
+            // Создаем элемент отображения типа недели
+            const weekTypeElement = document.createElement('div');
+            weekTypeElement.classList.add('week-type');
+            
+            // Получаем текущий день недели
+            const day = getCurrentDay();
+            
+            // Сохраняем тип недели в глобальной переменной для использования в updateCurrentTime
+            window.weekType = data.week_type;
+            
+            weekTypeElement.innerHTML = `${day}<div class="week-type-label">${data.week_type}</div>`;
+            
+            // Добавляем элемент в текущее время
+            const timeInfoElement = document.querySelector('.time-info');
+            if (timeInfoElement) {
+                timeInfoElement.insertBefore(weekTypeElement, currentTimeElement);
+            }
+        }
+        
         // Проверяем наличие расписания
-        if (!groupData.lessons || groupData.lessons.length === 0) {
-            scheduleContainerElement.innerHTML = '<div class="schedule-note">Для этой группы нет доступного расписания.</div>';
+        if (!data.lessons || data.lessons.length === 0) {
+            scheduleContainerElement.innerHTML = '<div class="schedule-note">Нет доступного расписания.</div>';
             return;
         }
         
         // Формируем HTML для расписания
-        groupData.lessons.forEach(lesson => {
+        data.lessons.forEach(lesson => {
             const lessonCard = document.createElement('div');
             lessonCard.classList.add('lesson-card', `lesson-${lesson.status}`);
             
-            lessonCard.innerHTML = `
-                <div class="lesson-header">
-                    <div class="lesson-number">${lesson.number}</div>
-                    <div class="lesson-time">${lesson.time}</div>
-                </div>
-                <div class="lesson-body">
-                    <div class="lesson-subject">${lesson.subject}</div>
-                    <div class="lesson-location">${lesson.room}</div>
-                    <div class="lesson-type">${lesson.type}</div>
-                </div>
-                ${lesson.status === 'current' ? '<canvas class="lesson-canvas"></canvas>' : ''}
-            `;
+            // Определяем содержимое карточки в зависимости от типа расписания
+            if (scheduleType === 'group') {
+                lessonCard.innerHTML = `
+                    <div class="lesson-header">
+                        <div class="lesson-number">${lesson.number}</div>
+                        <div class="lesson-time">${lesson.time}</div>
+                    </div>
+                    <div class="lesson-body">
+                        <div class="lesson-location">${lesson.room}</div>
+                        <div class="lesson-subject">${lesson.subject}</div>
+                        <div class="lesson-type">${lesson.type}</div>
+                    </div>
+                    ${lesson.status === 'current' ? '<canvas class="lesson-canvas"></canvas>' : ''}
+                `;
+            } else if (scheduleType === 'teacher') {
+                lessonCard.innerHTML = `
+                    <div class="lesson-header">
+                        <div class="lesson-number">${lesson.number}</div>
+                        <div class="lesson-time">${lesson.time}</div>
+                    </div>
+                    <div class="lesson-body">
+                        <div class="lesson-location">${lesson.room}</div>
+                        <div class="lesson-subject">${lesson.subject}</div>
+                        <div class="lesson-group">Группа: ${lesson.group || 'Не указана'}</div>
+                        <div class="lesson-type">${lesson.type}</div>
+                    </div>
+                    ${lesson.status === 'current' ? '<canvas class="lesson-canvas"></canvas>' : ''}
+                `;
+            }
             
             scheduleContainerElement.appendChild(lessonCard);
             
@@ -157,6 +361,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 initCanvas(canvas, lessonCard);
             }
         });
+    }
+    
+    // Функция для получения текущего дня недели
+    function getCurrentDay() {
+        const now = new Date();
+        const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+        return days[now.getDay()];
     }
     
     // Функция для инициализации canvas
@@ -178,8 +389,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Создаем виртуальную "карту"
         const mapSize = { width: 2000, height: 1500 };
         
+        // Устанавливаем фиксированную начальную точку для всех анимаций
+        const initialPoint = { x: 1188, y: 867 };
+        
         // Текущее положение на карте (центр просмотра)
-        let currentViewCenter = { x: mapSize.width / 2, y: mapSize.height / 2 };
+        let currentViewCenter = { ...initialPoint };
         
         // Параметры отображения
         const viewParams = {
@@ -208,11 +422,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Устанавливаем путь к изображению
         mapImage.src = 'data/map.png';
         
-        // Данные точек для кабинетов (вместо загрузки из JSON-файла)
-        const mapPoints = {
+        // Резервные данные точек на случай проблем с загрузкой
+        const fallbackPoints = {
             "419": [
                 {"x": 1188, "y": 867},
-                {"x": 1156, "y": 1241},
+                {"x": 1156, "y": 1241}
             ],
             "333": [
                 {"x": 500, "y": 600},
@@ -225,6 +439,9 @@ document.addEventListener('DOMContentLoaded', function() {
             ]
         };
         
+        // Переменная для хранения загруженных точек
+        let mapPoints = null;
+        
         // Загрузка точек для текущего кабинета
         loadRoomPoints();
         
@@ -232,16 +449,43 @@ document.addEventListener('DOMContentLoaded', function() {
             // Получаем номер кабинета из текущей карточки
             const roomNumber = container.querySelector('.lesson-number').textContent.trim();
             
-            // Используем встроенные данные вместо fetch
-            if (mapPoints[roomNumber]) {
-                console.log(mapPoints[roomNumber]);
-                // Если есть точки для этого кабинета, запускаем анимацию
-                animatePoints(mapPoints[roomNumber]);
-            } else {
-                console.log(`Точки для кабинета ${roomNumber} не найдены`);
-                // Если точек нет, рисуем просто центр карты
-                drawMap();
-            }
+            // Сначала пытаемся загрузить точки из JSON-файла
+            fetch('data/map_points.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Не удалось загрузить данные точек');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    mapPoints = data;
+                    
+                    if (mapPoints[roomNumber]) {
+                        console.log('Точки загружены из JSON:', mapPoints[roomNumber]);
+                        // Если есть точки для этого кабинета, запускаем анимацию
+                        animatePoints(mapPoints[roomNumber]);
+                    } else {
+                        console.log(`Точки для кабинета ${roomNumber} не найдены в JSON`);
+                        // Если точек нет, рисуем просто центр карты
+                        drawMap();
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при загрузке точек из JSON:', error);
+                    
+                    // Используем резервные данные
+                    mapPoints = fallbackPoints;
+                    
+                    if (mapPoints[roomNumber]) {
+                        console.log('Используем резервные точки:', mapPoints[roomNumber]);
+                        // Если есть точки для этого кабинета, запускаем анимацию
+                        animatePoints(mapPoints[roomNumber]);
+                    } else {
+                        console.log(`Точки для кабинета ${roomNumber} не найдены в резервных данных`);
+                        // Если точек нет, рисуем просто центр карты
+                        drawMap();
+                    }
+                });
         }
         
         // Функция анимации перемещения между точками
@@ -250,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             let currentPointIndex = 0;
             let animationStartTime = null;
-            let startPoint = {...currentViewCenter};
+            let startPoint = {...initialPoint};
             let targetPoint = points[0];
             
             function animateToNextPoint(timestamp) {
@@ -284,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         setTimeout(() => {
                             currentPointIndex = 0;
                             animationStartTime = null;
-                            startPoint = {...currentViewCenter};
+                            startPoint = {...initialPoint};  // Возвращаемся к начальной точке
                             targetPoint = points[0];
                             requestAnimationFrame(animateToNextPoint);
                         }, 3000);
@@ -295,8 +539,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            // Запускаем анимацию
-            requestAnimationFrame(animateToNextPoint);
+            // Отрисовываем начальное положение
+            drawMap();
+            
+            // Запускаем анимацию после небольшой задержки
+            setTimeout(() => {
+                requestAnimationFrame(animateToNextPoint);
+            }, 500);
         }
         
         // Функция плавности для анимации

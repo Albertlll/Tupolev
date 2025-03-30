@@ -37,6 +37,7 @@
     color: #333;
     font-weight: 500;
     margin-bottom: 20px;
+    display: none; /* Скрываем счетчик времени */
 }
 
 .input-display {
@@ -181,4 +182,108 @@
         font-size: 1.8rem;
         padding: 10px;
     }
+}
+
+/* Стили для кнопки "Я учитель" */
+.teacher-button-row {
+    margin-top: 15px;
+}
+
+#teacher-btn {
+    width: 100%;
+    padding: 15px 30px;
+    font-size: 1.4rem;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#teacher-btn:hover {
+    background-color: #1976D2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Стили для экрана ввода ФИО преподавателя */
+.teacher-input-display {
+    width: 90%;
+    max-width: 600px;
+}
+
+#teacher-name-input {
+    width: 100%;
+    font-size: 1.6rem;
+    padding: 15px;
+    text-align: center;
+    border: none;
+    border-radius: 50px;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Montserrat', sans-serif;
+    color: #333;
+}
+
+#teacher-clear-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+#teacher-clear-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #666;
+}
+
+#teacher-submit-btn, #teacher-back-btn {
+    padding: 15px 30px;
+    font-size: 1.4rem;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+#teacher-submit-btn {
+    background-color: #3f51b5;
+}
+
+#teacher-back-btn {
+    background-color: #f44336;
+}
+
+#teacher-submit-btn:hover {
+    background-color: #303f9f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+#teacher-back-btn:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
 } 

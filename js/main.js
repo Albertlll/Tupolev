@@ -6,6 +6,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const sliderElement = document.getElementById('slider');
     const inputScreen = document.getElementById('input-screen');
     
+    // Система отслеживания активности
+    let inactivityTimer;
+    const INACTIVITY_TIMEOUT = 10000; // 10 секунд
+    
+    // Функция для запуска таймера неактивности
+    function startInactivityTimer() {
+        // Очищаем предыдущий таймер, если он существует
+        clearTimeout(inactivityTimer);
+        
+        // Устанавливаем новый таймер
+        inactivityTimer = setTimeout(() => {
+            console.log('Пользователь неактивен в течение 10 секунд, возвращаемся на начальный экран');
+            // Возвращаемся к слайдеру
+            hideInputScreen();
+        }, INACTIVITY_TIMEOUT);
+    }
+    
+    // Сбрасываем таймер при любой активности
+    function resetInactivityTimer() {
+        startInactivityTimer();
+    }
+    
+    // Отслеживаем события активности пользователя
+    document.addEventListener('mousemove', resetInactivityTimer);
+    document.addEventListener('mousedown', resetInactivityTimer);
+    document.addEventListener('keypress', resetInactivityTimer);
+    document.addEventListener('touchstart', resetInactivityTimer);
+    document.addEventListener('scroll', resetInactivityTimer);
+    
+    // Запускаем таймер при загрузке страницы
+    startInactivityTimer();
+    
     // Инициализация приложения
     initApp();
     
@@ -36,7 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Функция скрытия экрана ввода (возврат к слайдеру)
     function hideInputScreen() {
-        inputScreen.classList.add('hidden');
+        document.getElementById('input-screen').classList.add('hidden');
+        document.getElementById('teacher-input-screen').classList.add('hidden');
         sliderElement.classList.remove('hidden');
         
         // Возобновляем воспроизведение слайдера
