@@ -1,17 +1,17 @@
 [
     {
-        "authorName": "Колледж Информационных Технологий",
-        "authorAvatar": "slides/avatars/college-avatar.svg",
+        "authorName": "КИТ",
+        "authorAvatar": "slides/avatars/kit.png",
         "slide": "slides/1.png"
     },
     {
-        "authorName": "Колледж Информационных Технологий",
-        "authorAvatar": "slides/avatars/college-avatar.svg",
+        "authorName": "ИКТЗИ",
+        "authorAvatar": "slides/avatars/iktzi.png",
         "slide": "slides/2.png"
     },
     {
-        "authorName": "Колледж Информационных Технологий",
-        "authorAvatar": "slides/avatars/college-avatar.svg",
+        "authorName": "КИТ",
+        "authorAvatar": "slides/avatars/kit.png",
         "slide": "slides/3.png"
     }
 ] 

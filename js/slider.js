@@ -3,6 +3,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Получаем элемент слайдера
     const sliderElement = document.getElementById('slider');
+
+    console.log('DOMContentLoaded');
     
     // Настройки слайдера
     const sliderSettings = {

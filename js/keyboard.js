@@ -16,6 +16,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const teacherSubmitBtn = document.getElementById('teacher-submit-btn');
     const teacherBackBtn = document.getElementById('teacher-back-btn');
     
+    // Устанавливаем значения по умолчанию
+    if (groupInput) {
+        groupInput.value = '4337';
+    }
+    
+    if (teacherNameInput) {
+        teacherNameInput.value = 'Шумилкин Александр Олегович';
+    }
+    
     // Система отслеживания активности
     let inactivityTimer;
     const INACTIVITY_TIMEOUT = 10000; // 10 секунд

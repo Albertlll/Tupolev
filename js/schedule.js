@@ -46,9 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
     startInactivityTimer();
     
     // Обработчик для кнопки "Вернуться на главную"
-    // document.getElementById('back-to-main').addEventListener('click', function() {
-    //     window.location.href = 'index.html';
-    // });
+    document.getElementById('back-to-main').addEventListener('click', function() {
+        window.location.href = 'index.html';
+    });
     
     // Инициализация страницы
     initPage();
@@ -114,6 +114,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Установка номера группы в заголовок
         groupNumberElement.textContent = groupNumber;
         
+        // Устанавливаем текст "Группа:"
+        const groupInfoText = document.querySelector('.group-info-text');
+        if (groupInfoText) {
+            groupInfoText.textContent = 'Группа:';
+        }
+        
         // Показываем индикатор загрузки
         showLoading();
         
@@ -152,6 +158,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function loadTeacherSchedule(teacherName) {
         // Установка имени преподавателя в заголовок
         groupNumberElement.textContent = teacherName;
+        
+        // Устанавливаем текст "Преподаватель:"
+        const groupInfoText = document.querySelector('.group-info-text');
+        if (groupInfoText) {
+            groupInfoText.textContent = 'Преподаватель:';
+        }
         
         // Показываем индикатор загрузки
         showLoading();
