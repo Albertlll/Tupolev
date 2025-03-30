@@ -1,0 +1,99 @@
+{
+  "groups": {
+    "101": {
+      "name": "101",
+      "schedule": [
+        {
+          "day": "Понедельник",
+          "lessons": [
+            {
+              "time": "8:30 - 10:00",
+              "subject": "Математика",
+              "teacher": "Иванов И.И.",
+              "room": "305",
+              "status": "past"
+            },
+            {
+              "time": "10:10 - 11:40",
+              "subject": "Информатика",
+              "teacher": "Петров П.П.",
+              "room": "401",
+              "status": "current"
+            },
+            {
+              "time": "12:00 - 13:30",
+              "subject": "Физика",
+              "teacher": "Сидоров С.С.",
+              "room": "208",
+              "status": "upcoming"
+            }
+          ]
+        },
+        {
+          "day": "Вторник",
+          "lessons": [
+            {
+              "time": "8:30 - 10:00",
+              "subject": "История",
+              "teacher": "Смирнова О.В.",
+              "room": "102",
+              "status": "upcoming"
+            },
+            {
+              "time": "10:10 - 11:40",
+              "subject": "Английский язык",
+              "teacher": "Иванова А.А.",
+              "room": "301",
+              "status": "upcoming"
+            }
+          ]
+        }
+      ]
+    },
+    "419": {
+      "name": "419",
+      "schedule": [
+        {
+          "day": "Понедельник",
+          "lessons": [
+            {
+              "time": "10:10 - 11:40",
+              "subject": "Физика",
+              "teacher": "Сидоров С.С.",
+              "room": "208",
+              "status": "past"
+            },
+            {
+              "time": "12:00 - 13:30",
+              "subject": "Математика",
+              "teacher": "Иванов И.И.",
+              "room": "305",
+              "status": "current"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "animation": {
+    "points": [
+      {"x": 50, "y": 50},
+      {"x": 150, "y": 100},
+      {"x": 250, "y": 200},
+      {"x": 350, "y": 150},
+      {"x": 450, "y": 50},
+      {"x": 400, "y": 300},
+      {"x": 300, "y": 400},
+      {"x": 200, "y": 350},
+      {"x": 100, "y": 250}
+    ],
+    "colors": {
+      "past": "#AAAAAA",
+      "current": "#3F51B5",
+      "upcoming": "#FFC107",
+      "background": "#F5F5F5",
+      "text": "#333333",
+      "highlight": "#E3F2FD"
+    }
+  }
+} 

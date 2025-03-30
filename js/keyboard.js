@@ -6,12 +6,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearBtn = document.getElementById('clear-btn');
     const submitBtn = document.getElementById('submit-btn');
     const keys = document.querySelectorAll('.key');
+    const currentTimeElement = document.getElementById('input-current-time');
     
     // Максимальная длина ввода
     const MAX_INPUT_LENGTH = 10;
     
     // Инициализация клавиатуры
     initKeyboard();
+    
+    // Обновляем время
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 1000);
+    
+    // Функция обновления времени
+    function updateCurrentTime() {
+        if (currentTimeElement) {
+            const now = new Date();
+            currentTimeElement.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+        }
+    }
     
     // Функция инициализации клавиатуры
     function initKeyboard() {
