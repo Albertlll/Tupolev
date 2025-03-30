@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#3F51B5"/>
+  <text x="256" y="280" font-family="Arial, sans-serif" font-size="200" font-weight="bold" fill="white" text-anchor="middle">ИК</text>
+  <path d="M120 160 L392 160 L392 432 L120 432 Z" stroke="white" stroke-width="15" fill="none"/>
+  <path d="M150 190 L362 190" stroke="white" stroke-width="8"/>
+  <path d="M150 220 L300 220" stroke="white" stroke-width="8"/>
+  <path d="M150 250 L330 250" stroke="white" stroke-width="8"/>
+  <path d="M150 350 L330 350" stroke="white" stroke-width="8"/>
+  <path d="M150 380 L280 380" stroke="white" stroke-width="8"/>
+  <path d="M150 410 L300 410" stroke="white" stroke-width="8"/>
+</svg> 
